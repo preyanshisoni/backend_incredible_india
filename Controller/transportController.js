@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
-import Transport from "../Models/Transport.model.js";
+// import Transport from "../Models/Transport.model.js";
+import Transport from "../Models/transport.model.js"
 
 export const addtransport = async (req, res) => {
   try {
