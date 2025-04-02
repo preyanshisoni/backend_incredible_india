@@ -29,12 +29,12 @@
   res.sendFile(path.join(__dirname, "admin-panel/build", "index.html"));
 });
 
-app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors({ origin: ["http://localhost:3000","https://frontend-incredible-india.vercel.app/"] }));
   app.use("/uploads", express.static("uploads"));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  const PORT = process.env.PORT;
+  const PORT = process.env.PORT || 3001;
   connectDB();
 
   app.use(express.json());
@@ -47,6 +47,7 @@ app.use(cors({ origin: "http://localhost:3000" }));
   app.use("/transport", upload.none(), transportRoutes);
   app.use("/locationtransport", upload.none(), locationTransportRoutes);
   app.use("/search",SearchRouter);
+
 
 
   app.listen(PORT, () => {
