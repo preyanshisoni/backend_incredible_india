@@ -12,7 +12,8 @@
   import multer from "multer";
   import path from "path";
   import { fileURLToPath } from "url";
-  const { createServer } = require("@vercel/node");
+//  import { createServer } from "@vercel/node";
+
 
 
   dotenv.config();
@@ -34,7 +35,7 @@ app.use(cors({ origin: ["http://localhost:3000","https://frontend-incredible-ind
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  const PORT = process.env.PORT || 3001;
+  const PORT = process.env.PORT;
   connectDB();
 
   app.use(express.json());

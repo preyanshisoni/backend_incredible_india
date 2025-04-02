@@ -8,8 +8,6 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "dev": "nodemon index.js"
-
-
   },
   "keywords": [],
   "author": "",
@@ -18,6 +16,7 @@
   "dependencies": {
     "@adminjs/express": "^6.1.1",
     "@adminjs/mongoose": "^4.1.0",
+    "@vercel/node": "^5.1.14",
     "adminjs": "^7.8.13",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
@@ -33,5 +32,4 @@
   "engines": {
     "node": "20.x"
   }
-
 }
