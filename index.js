@@ -41,6 +41,9 @@ app.use(cors({ origin: ["http://localhost:3000","https://frontend-incredible-ind
   app.use(express.json());
   app.use(cors());
 
+  app.get("/", (req, res) => {
+    res.send("Backend is running successfully! 🎉");
+  });
   app.use("/ckeditor",imageUploadRoutes);
   app.use("/locations", locationRoutes);
   app.use("/categories", upload.none(), categoryRoutes);
