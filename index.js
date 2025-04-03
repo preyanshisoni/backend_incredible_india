@@ -60,9 +60,4 @@ app.use(cors({ origin: ["http://localhost:3000","https://frontend-incredible-ind
   });
 
 
-// app.listen(PORT, "0.0.0.0", () => {
-//   console.log(`Server is running on port ${PORT}`);
-// });
-
-
   export default app;
