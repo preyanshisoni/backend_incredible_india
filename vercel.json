@@ -14,8 +14,20 @@
       "dest": "/admin-panel/build/index.html"
     },
     {
+      "src": "/logo192.png",
+      "dest": "/admin-panel/build/logo192.png"
+    },
+    {
+      "src": "/logo512.png",
+      "dest": "/admin-panel/build/logo512.png"
+    },
+    {
       "src": "/manifest.json",
       "dest": "/admin-panel/build/manifest.json"
+    },
+    {
+      "src": "/static/(.*)",
+      "dest": "/admin-panel/build/static/$1"
     },
     {
       "src": "/(.*)",
