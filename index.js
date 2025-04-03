@@ -26,17 +26,12 @@
 
   app.use("/admin", express.static(path.join(__dirname, "admin-panel/build")));
   app.use("/static", express.static(path.join(__dirname, "admin-panel/build/static")));
-  app.use("/admin/manifest.json", express.static(path.join(__dirname, "admin-panel/build/manifest.json")));
+  app.use("/manifest.json", express.static(path.join(__dirname, "admin-panel/build/manifest.json")));
 
   app.get("/admin/*", (req, res) => {
   res.sendFile(path.join(__dirname, "admin-panel/build", "index.html"));
 });
 
-//added for explicitly serve manifest.json
-
-app.get("/manifest.json", (req, res) => {
-  res.sendFile(path.join(__dirname, "admin-panel/build", "manifest.json"));
-});
 
 
 app.use(cors({ origin: ["http://localhost:3000","https://frontend-incredible-india.vercel.app/"] }));
