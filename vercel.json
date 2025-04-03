@@ -1,8 +1,8 @@
-
 {
   "version": 2,
   "builds": [
-    { "src": "index.js", "use": "@vercel/node" }
+    { "src": "index.js", "use": "@vercel/node" },
+    { "src": "admin-panel/build/**/*", "use": "@vercel/static" }
   ],
   "routes": [
     {
