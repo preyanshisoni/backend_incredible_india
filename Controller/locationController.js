@@ -15,6 +15,7 @@ export const addLocation = async (req, res) => {
       : `${req.protocol}://${req.get("host")}`;
       picturePath = `${fullUrl}/uploads/${req.file.filename}`;
     }
+    // console.log("*************",process.env.NODE_ENV);
 
     const normalizedParentId =
       parent_id === "null" || parent_id === "" ? null : parent_id;
