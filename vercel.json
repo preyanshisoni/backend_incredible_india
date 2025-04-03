@@ -1,7 +1,12 @@
 {
   "version": 2,
   "builds": [{ "src": "index.js", "use": "@vercel/node" }],
+
   "routes": [
+    {
+      "src": "/admin/(.*)",
+      "dest": "/admin-panel/build/$1"
+    },
     {
       "src": "/(.*)",
       "dest": "index.js"
