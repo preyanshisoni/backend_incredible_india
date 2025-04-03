@@ -9,7 +9,10 @@ export const addLocation = async (req, res) => {
     let picturePath = "";
 
     if (req.file) {
-      const fullUrl = `${req.protocol}://${req.get("host")}`;
+      // const fullUrl = `${req.protocol}://${req.get("host")}`;
+      const fullUrl = process.env.NODE_ENV === "production"
+      ? "https://incredible-backend.vercel.app"
+      : `${req.protocol}://${req.get("host")}`;
       picturePath = `${fullUrl}/uploads/${req.file.filename}`;
     }
 
@@ -79,7 +82,7 @@ export const getChildLocationsByParentId = async (req, res) => {
 };
 
 export const updateLocation = async (req, res) => {
-  
+
   const { id } = req.params;
   const { name, description,favorite, most_visited, parent_id } = req.body;
   let picturePath = req.body.picture || "";
@@ -124,7 +127,7 @@ export const updateLocation = async (req, res) => {
 };
 
 export const getLocationById = async (req, res) => {
-  
+
   try {
     const locationId = req.params.id;
 
@@ -166,7 +169,7 @@ export const deleteMany = async (req, res) => {
       return res.status(400).json({ message: "One or more IDs are invalid" });
     }
 
-    
+
     const result = await Location.deleteMany({ _id: { $in: ids } });
 
     if (result.deletedCount === 0) {

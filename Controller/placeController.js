@@ -5,7 +5,10 @@ import PlaceImage from "../Models/PlaceImages.model.js";
 import Category, { CategorySchema } from "../Models/category.model.js";
 export const addPalace = async (req, res) => {
   try {
-    const fullUrl = `${req.protocol}://${req.get("host")}`;
+    // const fullUrl = `${req.protocol}://${req.get("host")}`;
+    const fullUrl = process.env.NODE_ENV === "production"
+    ? "https://incredible-backend.vercel.app"
+    : `${req.protocol}://${req.get("host")}`;
 
     const fixString = (str) => (str ? str.replace(/^"|"$/g, "") : null);
 
@@ -207,7 +210,7 @@ export const deletepalaceById = async (req, res) => {
 export const Search = async (req, res) => {
   try {
     const { search, locations, categories, cities } = req.query;
-    
+
     if (req.query.filter === "most_visited") {
       filteredPlaces = filteredPlaces.filter(
         (place) => place.location_id.most_visited
@@ -269,7 +272,7 @@ export const getListByCategoryId = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(category_id)) {
       return res.status(400).json({ message: "Invalid category ID format" });
     }
-    
+
     const objectId = new mongoose.Types.ObjectId(category_id);
     const places = await Place.find({ category_id: objectId }).populate([
       { path: "location_id" },
