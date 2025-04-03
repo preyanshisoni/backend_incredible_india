@@ -30,6 +30,10 @@
   res.sendFile(path.join(__dirname, "admin-panel/build", "index.html"));
 });
 
+app.get("/", (req, res) => {
+  res.send("Backend is running successfully");
+});
+
 app.use(cors({ origin: ["http://localhost:3000","https://frontend-incredible-india.vercel.app/"] }));
   app.use("/uploads", express.static("uploads"));
   app.use(express.json());
