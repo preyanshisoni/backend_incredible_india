@@ -9,24 +9,25 @@ export const LocationSchema = new mongoose.Schema(
     description:{
     type:String
     },
-    
+
     favorite: {
       type:Boolean,
       default:false
     },
-    
+
+
     most_visited: {
       type:Boolean,
       default:false
     },
     picture: {
       type: String,
-      required: false 
+      required: false
     },
     parent_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Location",
-      default: null, 
+      default: null,
     },
   },
 { timestamps: true }
