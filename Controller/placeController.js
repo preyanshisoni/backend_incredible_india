@@ -7,8 +7,8 @@ export const addPalace = async (req, res) => {
   try {
     // const fullUrl = `${req.protocol}://${req.get("host")}`;
     const fullUrl = process.env.NODE_ENV === "production"
-    ? "https://incredible-backend.vercel.app"
-    : `${req.protocol}://${req.get("host")}`;
+      ? "https://incredible-backend.vercel.app"
+      : `${req.protocol}://${req.get("host")}`;
 
     const fixString = (str) => (str ? str.replace(/^"|"$/g, "") : null);
 
@@ -29,9 +29,21 @@ export const addPalace = async (req, res) => {
         });
     }
 
-    const picturePaths = req.files
-      ? req.files.map((file) => `${fullUrl}/uploads/${file.filename}`)
-      : [];
+    let picturePaths = [];
+
+    if (req.body.pictures) {
+      try {
+        const parsedPics = JSON.parse(req.body.pictures);
+
+        if (Array.isArray(parsedPics)) {
+          picturePaths = parsedPics;
+        }
+      } catch (e) {
+        console.error("Error parsing pictures:", e.message);
+      }
+    }
+
+
 
     const tags = req.body.tags
       ? Array.isArray(req.body.tags)
@@ -53,6 +65,8 @@ export const addPalace = async (req, res) => {
     });
 
     const savedPlace = await newPlace.save();
+    console.log("Image ID saved in Place:", savedPlace.image_id);
+
 
     const newPlaceImage = new PlaceImage({
       place_id: savedPlace._id,
@@ -79,7 +93,9 @@ export const getPlaces = async (req, res) => {
     const palace = await Place.find().populate([
       { path: "location_id" },
       { path: "category_id" },
-      { path: "image_id" },
+      { path: "image_id" , select: "pictures", model: "PlaceImage"},
+
+
     ]);
     res.json(palace);
   } catch (error) {
@@ -136,17 +152,40 @@ export const updatePlace = async (req, res) => {
       opening_hours,
     } = req.body;
 
-    const fullUrl = `${req.protocol}://${req.get("host")}`;
-    const picturePaths =
-      req.files?.map((file) => `${fullUrl}/uploads/${file.filename}`) || [];
 
+    // const fullUrl = `${req.protocol}://${req.get("host")}`;
+    const existingPlace = await Place.findById(id);
+    if (!existingPlace) {
+      return res.status(404).json({ message: "Place not found" });
+    }
+
+    let picturesArray = [];
+
+    try {
+     if (req.body.pictures) {
+  picturesArray = typeof req.body.pictures === "string"
+    ? JSON.parse(req.body.pictures)
+    : req.body.pictures;
+
+  // Confirm all elements are strings
+  if (!picturesArray.every(url => typeof url === "string")) {
+    return res.status(400).json({ message: "Pictures must be an array of URLs" });
+  }
+}
+
+    } catch (err) {
+      console.error("Failed to parse pictures:", err.message);
+      return res.status(400).json({ message: "Invalid pictures format" });
+    }
+
+    const updatedPictures = picturesArray
     const updates = {
       name,
       description,
       location_id,
       category_id,
       tags,
-      pictures: picturePaths,
+      pictures:updatedPictures,
       video,
       latitude,
       longitude,
@@ -172,6 +211,94 @@ export const updatePlace = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+
+// export const updatePlace = async (req, res) => {
+//   const { id } = req.params;
+
+//   if (!mongoose.Types.ObjectId.isValid(id)) {
+//     return res.status(400).json({ message: "Invalid ID format" });
+//   }
+
+//   try {
+//     const {
+//       name,
+//       description,
+//       location_id,
+//       category_id,
+//       tags,
+//       video,
+//       latitude,
+//       longitude,
+//       contact_info,
+//       opening_hours,
+//       pictures,
+//     } = req.body;
+
+//     const existingPlace = await Place.findById(id);
+//     if (!existingPlace) {
+//       return res.status(404).json({ message: "Place not found" });
+//     }
+
+//     // ✅ 1. Parse Pictures (as array of strings)
+//     let picturesArray = [];
+//     try {
+//       if (pictures) {
+//         picturesArray = typeof pictures === "string" ? JSON.parse(pictures) : pictures;
+//         if (!Array.isArray(picturesArray)) throw new Error("Pictures must be an array");
+//       }
+//     } catch (err) {
+//       console.error("Failed to parse pictures:", err.message);
+//       return res.status(400).json({ message: "Invalid pictures format" });
+//     }
+
+//     // ✅ 2. Update core place info
+//     const updates = {
+//       name,
+//       description,
+//       location_id,
+//       category_id,
+//       tags,
+//       video,
+//       latitude,
+//       longitude,
+//       contact_info: contact_info ? JSON.parse(contact_info) : undefined,
+//       opening_hours: opening_hours ? JSON.parse(opening_hours) : undefined,
+//     };
+
+//     Object.keys(updates).forEach((key) => updates[key] === undefined && delete updates[key]);
+
+//     const updatedPlace = await Place.findByIdAndUpdate(id, updates, {
+//       new: true,
+//     });
+
+//     // ✅ 3. Update PlaceImage collection with string URLs
+//     if (picturesArray.length > 0) {
+//       let placeImage = await PlaceImage.findOne({ place_id: id });
+
+//       if (placeImage) {
+//         placeImage.pictures = picturesArray;
+//         await placeImage.save();
+//       }else {
+//         placeImage = new PlaceImage({
+//           place_id: id,
+//           pictures: picturesArray,
+//         });
+//         await placeImage.save();
+
+//         updatedPlace.image_id = placeImage._id;
+//         await updatedPlace.save();
+//       }
+//     }
+
+//     res.status(200).json({ data: updatedPlace, message: "Place updated successfully" });
+
+//   } catch (err) {
+//     console.error("Update failed:", err);
+//     res.status(400).json({ message: err.message });
+//   }
+// };
+
+
 
 export const getpalaceById = async (req, res) => {
   try {
@@ -268,7 +395,7 @@ export const Search = async (req, res) => {
 
 export const getListByCategoryId = async (req, res) => {
   try {
-    const {category_id} = req.params;
+    const { category_id } = req.params;
     if (!mongoose.Types.ObjectId.isValid(category_id)) {
       return res.status(400).json({ message: "Invalid category ID format" });
     }

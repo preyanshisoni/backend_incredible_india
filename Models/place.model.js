@@ -16,8 +16,6 @@ const PlaceSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 const Place = mongoose.model('Place',PlaceSchema);
-// export default Place;
-
 const NearbyPlaces = new mongoose.Schema(
   {
     place_id: {
