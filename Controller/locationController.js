@@ -5,17 +5,18 @@ import {addLocationservice } from "../Service/locationService.js";
 
 export const addLocation = async (req, res) => {
   try {
-    const { name,description, favorite, most_visited, parent_id } = req.body;
-    let picturePath = "";
+    const { name,description, picture,favorite, most_visited, parent_id } = req.body;
+    console.log("REquest.body from location create",req.body);
+    // let picturePath = "";
 
-    if (req.file) {
-      // const fullUrl = `${req.protocol}://${req.get("host")}`;
-      const fullUrl = process.env.NODE_ENV === "production"
-      ? "https://incredible-backend.vercel.app"
-      : `${req.protocol}://${req.get("host")}`;
-      picturePath = `${fullUrl}/uploads/${req.file.filename}`;
-    }
-    // console.log("*************",process.env.NODE_ENV);
+    // if (req.file) {
+    //   const fullUrl = `${req.protocol}://${req.get("host")}`;
+    //   }
+
+    // if (req.file) {
+    //   picturePath  = req.file.path;
+    //   }
+
 
     const normalizedParentId =
       parent_id === "null" || parent_id === "" ? null : parent_id;
@@ -26,7 +27,7 @@ export const addLocation = async (req, res) => {
       favorite,
       most_visited,
       parent_id: normalizedParentId,
-      picture: picturePath,
+      picture
     });
 
     const savedLocation = await newLocation.save();
@@ -85,18 +86,12 @@ export const getChildLocationsByParentId = async (req, res) => {
 export const updateLocation = async (req, res) => {
 
   const { id } = req.params;
-  const { name, description,favorite, most_visited, parent_id } = req.body;
-  let picturePath = req.body.picture || "";
-
+  const { name, picture, description,favorite, most_visited, parent_id } = req.body;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ message: "Invalid ID format" });
   }
 
   try {
-    if (req.file) {
-      const fullUrl = `${req.protocol}://${req.get("host")}`;
-      picturePath = `${fullUrl}/uploads/${req.file.filename}`;
-    }
 
     const normalizedParentId =
       parent_id === "null" || parent_id === "" ? null : parent_id;
@@ -107,7 +102,7 @@ export const updateLocation = async (req, res) => {
       favorite,
       most_visited,
       parent_id: normalizedParentId,
-      picture: picturePath,
+      picture: picture || "",
     };
 
     const updatedLocation = await Location.findByIdAndUpdate(id, updates, {
